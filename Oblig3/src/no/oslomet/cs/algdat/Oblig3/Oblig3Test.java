@@ -1,4 +1,4 @@
-package no.oslomet.cs.algdat;
+package no.oslomet.cs.algdat.Oblig3;
 
 
 ////// Testprogram for Oblig 3 - 2019 ////////////////////////

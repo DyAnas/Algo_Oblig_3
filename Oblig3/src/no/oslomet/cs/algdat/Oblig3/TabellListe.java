@@ -1,4 +1,4 @@
-package no.oslomet.cs.algdat;
+package no.oslomet.cs.algdat.Oblig3;
 
 import java.util.Arrays;
 import java.util.Iterator;

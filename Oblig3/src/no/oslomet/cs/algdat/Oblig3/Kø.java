@@ -1,4 +1,4 @@
-package no.oslomet.cs.algdat;
+package no.oslomet.cs.algdat.Oblig3;
 
 public interface Kø<T>              // eng: Queue
 {
