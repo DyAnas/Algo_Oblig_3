@@ -150,18 +150,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
             s.append (']');
             return s.toString ();
         }
-        
-      /*  if (p == null) {
-            s.append (']');
-            return s.toString ();
-        }
 
-        if (p.venstre == null && p.høyre == null) {
-            s.append (p.verdi);
-            s.append (' ');
-            s.append (',');
-
-        }*/
         TabellStakk<Node> stakk = new TabellStakk<> () ;
         stakk.leggInn (p);
         while (!stakk.tom ()){
@@ -175,16 +164,13 @@ public class ObligSBinTre<T> implements Beholder<T> {
             } if (q.venstre == null && q.høyre == null){
 
                 s.append (q.verdi);
-                if (q.verdi!= null){
+                if (q.verdi != null) {
                     s.append (',');
                     s.append (' ');
                 }
-
+                }
             }
-
-        }
           s.append (']');
-
         return s.toString ();
     }
 
@@ -234,11 +220,10 @@ public class ObligSBinTre<T> implements Beholder<T> {
         s.append (']');
         return s.toString ();
 */
-        TabellStakk<Node> s1 = new TabellStakk<> ();
-        TabellStakk<Node> s2 = new TabellStakk<> ();
 
         StringBuilder s = new StringBuilder ();
-        // legge inn først node in stakk
+
+   /*     // legge inn først node in stakk
         Node p = rot;
         s1.leggInn (p);
         while (s1.tom () == false) {
@@ -261,6 +246,36 @@ public class ObligSBinTre<T> implements Beholder<T> {
           s.append (',');
             s.append (' ') ;
         }
+        s.append (']');*/
+        Node p = rot;
+        TabellStakk<Node> stakk = new TabellStakk<> () ;
+        stakk.leggInn (p);
+        s.append ('[');
+      while (!stakk.tom ()){
+
+          Node q = stakk.kikk ();
+
+          if (q.høyre == null && q.venstre == null){
+              Node r = stakk.taUt ();
+
+              if (r.verdi != null) {
+
+                  s.append (r.verdi);
+                  s.append (' ');
+                  s.append (',');
+              }
+          }
+          else{
+              if(q.høyre != null){
+                  stakk.leggInn (q.høyre);
+                  q.høyre = null;
+              }
+              if (q.venstre !=null){
+                  stakk.leggInn (q.venstre);
+                  q.venstre=null;
+              }
+          }
+      }
         s.append (']');
         return s.toString ();
     }
