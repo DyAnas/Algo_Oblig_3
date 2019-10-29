@@ -143,114 +143,50 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
     public String bladnodeverdier() {
-        StringBuilder s = new StringBuilder ();
-        s.append ('[');
+
+        StringJoiner s = new StringJoiner(", ", "[",  "]");
+
         Node p = rot;
         if (rot == null){
-            s.append (']');
-            return s.toString ();
+       return s.toString ();
+
         }
 
         TabellStakk<Node> stakk = new TabellStakk<> () ;
         stakk.leggInn (p);
         while (!stakk.tom ()){
             Node q = stakk.taUt ();
+
             if (q.høyre != null){
                 stakk.leggInn (q.høyre);
             }
             if(q.venstre != null){
                 stakk.leggInn (q.venstre);
-
             } if (q.venstre == null && q.høyre == null){
+                    s.add (q.verdi.toString ());
 
-                s.append (q.verdi);
-                if (q.verdi != null) {
-                    s.append (',');
-                    s.append (' ');
+
                 }
-                }
-            }
-          s.append (']');
+            }    //s.append (']');
+        //String result = s.deleteCharAt(s.length() - 2).toString()+"]" + s.toString ().length ();
+        // result += "]";
         return s.toString ();
     }
 
     public String postString() {
-      /*  TabellStakk<Node> stakk = new TabellStakk<> ();
-        StringBuilder s = new StringBuilder ();
-        s.append ('[');
-        if (stakk == null) {
-            s.append (']');
+
+
+        StringJoiner s = new StringJoiner(", ", "[",  "]");
+
+
+        Node p = rot;
+        if (rot == null){
             return s.toString ();
+
         }
-        Node r = rot;
-        stakk.leggInn (r); // legger noe øverst på stakken
-        Node fo = null;
-
-        while (!stakk.tom ()) {
-
-            Node tmp = stakk.kikk ();
-            //
-            if (fo == null || fo.venstre == tmp || fo.høyre == tmp) {
-                if (tmp.venstre != null)
-                    stakk.leggInn (r.venstre);
-                else if (tmp.høyre != null)
-                    stakk.leggInn (tmp.høyre);
-                else {
-                    stakk.taUt ();
-                    s.append (tmp.verdi);
-                    s.append (',');
-                }
-
-            } else if (tmp.venstre == fo) {
-                if (tmp.høyre != null) {
-                    stakk.leggInn (tmp.høyre);
-                } else {
-                    stakk.taUt ();
-                    s.append (tmp.verdi);
-                    s.append (',');
-                }
-            } else if (tmp.høyre == fo) {
-                stakk.taUt ();
-                s.append (tmp.verdi);
-                s.append (',');
-            }
-            fo = tmp;
-        }
-
-        s.append (']');
-        return s.toString ();
-*/
-
-        StringBuilder s = new StringBuilder ();
-
-   /*     // legge inn først node in stakk
-        Node p = rot;
-        s1.leggInn (p);
-        while (s1.tom () == false) {
-            // take out the root and insert into second stack.
-            Node temp = s1.taUt ();
-            s2.leggInn (temp);
-            // now we have the root, push the left and right child of root into
-            // the first stack.
-            if(temp.venstre!=null){
-                s1.leggInn (temp.venstre);
-            }
-            if(temp.høyre!=null){
-                s1.leggInn (temp.høyre);
-            }
-        }
-        //once the all node are traversed, take out the nodes from second stack and print it.
-        System.out.println("Preorder Traversal: ");
-        while(s2.tom ()==false){
-            s.append (s2.taUt ());
-          s.append (',');
-            s.append (' ') ;
-        }
-        s.append (']');*/
-        Node p = rot;
         TabellStakk<Node> stakk = new TabellStakk<> () ;
         stakk.leggInn (p);
-        s.append ('[');
+
       while (!stakk.tom ()){
 
           Node q = stakk.kikk ();
@@ -260,9 +196,8 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
               if (r.verdi != null) {
 
-                  s.append (r.verdi);
-                  s.append (' ');
-                  s.append (',');
+                  s.add (r.verdi.toString ());
+
               }
           }
           else{
@@ -276,7 +211,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
               }
           }
       }
-        s.append (']');
+
         return s.toString ();
     }
 
