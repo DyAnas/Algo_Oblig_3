@@ -73,8 +73,21 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
     @Override
-    public boolean inneholder(T verdi) {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+    public boolean inneholder(T verdi)
+    {
+        if (verdi == null) return false;
+
+        Node<T> p = rot;
+
+        while (p != null)
+        {
+            int cmp = comp.compare(verdi, p.verdi);
+            if (cmp < 0) p = p.venstre;
+            else if (cmp > 0) p = p.høyre;
+            else return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -92,9 +105,20 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
     public int antall(T verdi) {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
-
-    }
+            if(verdi.equals(null)) return 0;
+            int forekomster = 0; //teller antall forekomster av verdi
+            Node<T> p = rot;
+            while (p != null)
+            {
+                int cmp = comp.compare(verdi, p.verdi);
+                if (cmp < 0) p = p.venstre;
+                else{
+                    if (cmp == 0) forekomster++;
+                    p = p.høyre;
+                }
+            }
+            return forekomster;
+        }
 
     @Override
     public boolean tom() {
@@ -107,16 +131,76 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
     private static <T> Node<T> nesteInorden(Node<T> p) {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+        if(p.høyre != null){
+            p = p.høyre;
+            while(p.venstre != null){
+                p = p.venstre;
+            }
+            return p;
+        }else{
+            while(p.forelder != null && p.forelder.høyre != p){
+                    p = p.forelder;
+
+                }
+                return p.forelder;
+            }
+
     }
 
     @Override
-    public String toString() {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+    public String toString()
+    {
+        if(tom()) return "[]";
+
+
+        StringBuilder stringb = new StringBuilder();
+        stringb.append("[");
+
+        Node<T> p = rot;
+        while(p.venstre != null){
+            p = p.venstre;
+        }
+
+        for(int i = 0; i < antall; i++){
+            stringb.append(p.verdi);
+            if(i != (antall-1)) stringb.append(", ");
+            p = nesteInorden(p);
+        }
+
+        stringb.append("]");
+
+
+        return stringb.toString();
     }
 
-    public String omvendtString() {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+    public String omvendtString()
+    {
+        if(tom()) return "[]";
+        StringBuilder stringb = new StringBuilder();
+        Deque<Node> stack = new ArrayDeque<>();
+        stringb.append("[");
+
+        Node<T> p = rot;
+
+        while(p.venstre != null){
+            p = p.venstre;
+        }
+
+        for(int i = 0; i < antall; i++){
+            stack.addFirst(p);
+            p = nesteInorden(p);
+        }
+
+
+        for(int i = 0; i< antall; i++){
+            stringb.append(stack.pop());
+            if(i!=(antall-1)) stringb.append(", ");
+            //stack.removeFirst();
+        }
+
+        stringb.append("]");
+
+        return stringb.toString();
     }
 
     public String høyreGren() {
