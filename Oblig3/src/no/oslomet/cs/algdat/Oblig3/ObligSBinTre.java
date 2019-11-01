@@ -299,6 +299,8 @@ public class ObligSBinTre<T> implements Beholder<T> {
         return stringb.toString();
     }
 
+
+
     public String omvendtString()
     {
         if(tom()) return "[]";
@@ -330,11 +332,69 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
     public String høyreGren() {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+        if(tom()) return "[]";
+        StringJoiner s = new StringJoiner(", ", "[",  "]");
+        Node<T> p = rot;
+        while(p!=null){
+            s.add(p.verdi.toString());
+
+
+            if(p.høyre!=null){
+
+                p=p.høyre;
+
+            }
+            else if(p.venstre !=null &&p.høyre!=null){
+
+                p=p.høyre;
+
+            }
+            else {
+
+                p=p.venstre;
+
+            }
+
+
+
+
+
+
+
+        }
+        return  s.toString();
+
     }
 
     public String lengstGren() {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+        if(tom()) return "[]";
+        StringJoiner s = new StringJoiner(", ", "[",  "]");
+
+        Node<T> p = rot;
+        while(p!=null){
+            s.add(p.verdi.toString());
+
+            if(p.venstre!=null){
+
+                p=p.venstre;
+
+            }
+            else if(p.venstre !=null &&p.høyre!=null){
+
+                p=p.venstre;
+
+            }
+            else {
+
+                p=p.høyre;
+
+            }
+
+        }
+
+        return  s.toString();
+
+
     }
 
     public String[] grener() {
