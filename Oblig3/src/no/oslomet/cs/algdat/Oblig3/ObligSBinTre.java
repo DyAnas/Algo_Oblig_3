@@ -302,31 +302,42 @@ public class ObligSBinTre<T> implements Beholder<T> {
     public String omvendtString()
     {
         if(tom()) return "[]";
-        StringBuilder stringb = new StringBuilder();
-        Deque<Node> stack = new ArrayDeque<>();
-        stringb.append("[");
 
+        StringBuilder b  = new StringBuilder();
+        b.append("[");
+
+        Stakk<Node<T>> stakk = new TabellStakk<>();
         Node<T> p = rot;
 
-        while(p.venstre != null){
-            p = p.venstre;
+        for ( ; p.høyre!= null; p = p.høyre)
+        {
+            stakk.leggInn(p);
+        }
+        b.append(p.verdi);
+        while (true)
+        {
+            if (p.venstre != null)
+            {
+                for (p = p.venstre; p.høyre != null; p = p.høyre)
+                {
+                    stakk.leggInn(p);
+                }
+            }
+            else if (!stakk.tom())
+            {
+                p = stakk.taUt();
+
+            }
+
+            else break;
+            b.append(", ");
+            b.append(p.verdi);
+
         }
 
-        for(int i = 0; i < antall; i++){
-            stack.addFirst(p);
-            p = nesteInorden(p);
-        }
+        b.append("]");
 
-
-        for(int i = 0; i< antall; i++){
-            stringb.append(stack.pop());
-            if(i!=(antall-1)) stringb.append(", ");
-            //stack.removeFirst();
-        }
-
-        stringb.append("]");
-
-        return stringb.toString();
+        return  b.toString();
     }
 
     public String høyreGren() {
