@@ -2,7 +2,7 @@ package no.oslomet.cs.algdat.Oblig3;
 
 ////////////////// ObligSBinTre /////////////////////////////////
 
-import com.sun.source.tree.BinaryTree;
+
 
 import java.util.*;
 
@@ -92,11 +92,119 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     @Override
     public boolean fjern(T verdi) {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+        if (verdi == null) return false;  // treet har ingen nullverdier
+
+        Node<T> p = rot, q = null;   // q skal være forelder til p
+
+        while (p != null)            // leter etter verdi
+        {
+            int cmp = comp.compare(verdi,p.verdi);      // sammenligner
+            if (cmp < 0) { q = p; p = p.venstre; }      // går til venstre
+            else if (cmp > 0) { q = p; p = p.høyre; }   // går til høyre
+            else break;    // den søkte verdien ligger i p
+        }
+        if (p == null) return false;   // finner ikke verdi
+
+        if (p.venstre == null || p.høyre == null)  // Tilfelle 1) og 2)
+        {
+            Node<T> b = p.venstre != null ? p.venstre : p.høyre;  // b for barn
+            if (p == rot) rot = b;
+            else if (p == q.venstre) q.venstre = b;
+            else q.høyre = b;
+        }
+        else  // Tilfelle 3)
+        {
+            Node<T> s = p, r = p.høyre;   // finner neste i inorden
+            while (r.venstre != null)
+            {
+                s = r;    // s er forelder til r
+                r = r.venstre;
+            }
+
+            p.verdi = r.verdi;   // kopierer verdien i r til p
+
+            if (s != p) s.venstre = r.høyre;
+            else s.høyre = r.høyre;
+        }
+
+        antall--;   // det er nå én node mindre i treet
+        return true;
+
+
+
+
     }
 
     public int fjernAlle(T verdi) {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+        if (verdi == null) throw new
+                IllegalArgumentException("verdi er null!");
+
+        Node<T> p = rot;
+        Node<T> q = null;
+        Node<T> r = null;
+        Node<T> s = null;
+
+        Stakk<Node<T>> stakk = new TabellStakk<>();
+
+        while (p != null)
+        {
+            int cmp = comp.compare(verdi,p.verdi);
+
+            if (cmp < 0)
+            {
+                s = r;
+                r = q = p;
+                p = p.venstre;
+            }
+            else
+            {
+                if (cmp == 0)
+                {
+                    stakk.leggInn(q);
+                    stakk.leggInn(p);
+                }
+
+                q = p;
+                p = p.høyre;
+            }
+        }
+
+
+        int verdiAntall = stakk.antall()/2;
+
+        if (verdiAntall == 0) return 0;
+
+        while (stakk.antall() > 2)
+        {
+            p = stakk.taUt();
+            q = stakk.taUt();
+
+            if (p == q.venstre) q.venstre = p.høyre;
+            else q.høyre = p.høyre;
+        }
+
+
+
+        p = stakk.taUt();
+        q = stakk.taUt();
+
+        if (p.venstre == null || p.høyre == null)
+        {
+            Node<T> x = p.høyre == null ? p.venstre : p.høyre;
+            if (p == rot) rot = x;
+            else if (p == q.venstre) q.venstre = x;
+            else q.høyre = x;
+        }
+        else
+        {
+            p.verdi = r.verdi;
+            if (r == p.høyre) p.høyre = r.høyre;
+            else s.venstre = r.høyre;
+        }
+
+        antall -= verdiAntall;
+
+        return verdiAntall;
     }
 
     @Override
@@ -106,7 +214,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     public int antall(T verdi) {
             if(verdi.equals(null)) return 0;
-            int forekomster = 0; //teller antall forekomster av verdi
+            int forekomster = 0;
             Node<T> p = rot;
             while (p != null)
             {
@@ -127,8 +235,26 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     @Override
     public void nullstill() {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+        if (!tom()) nullstill(rot);  // nullstiller
+        rot = null; antall = 0;      // treet er nå tomt
+        endringer++;   // treet er endret
     }
+
+    private void nullstill(Node<T> p)
+    {
+        if (p.venstre != null)
+        {
+            nullstill(p.venstre);
+            p.venstre = null;
+        }
+        if (p.høyre != null)
+        {
+            nullstill(p.høyre);
+            p.høyre = null;
+        }
+        p.verdi = null;
+    }
+
 
     private static <T> Node<T> nesteInorden(Node<T> p) {
         if(p.høyre != null){
