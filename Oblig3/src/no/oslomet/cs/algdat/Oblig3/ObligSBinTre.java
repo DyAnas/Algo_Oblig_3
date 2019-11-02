@@ -256,6 +256,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
 
+
     private static <T> Node<T> nesteInorden(Node<T> p) {
         if(p.høyre != null){
             p = p.høyre;
@@ -278,8 +279,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
     {
         if(tom()) return "[]";
 
-
-        StringBuilder stringb = new StringBuilder();
+/*  StringBuilder stringb = new StringBuilder();
         stringb.append("[");
 
         Node<T> p = rot;
@@ -296,9 +296,58 @@ public class ObligSBinTre<T> implements Beholder<T> {
         stringb.append("]");
 
 
-        return stringb.toString();
-    }
+        return stringb.toString();*/
 
+        StringJoiner s = new StringJoiner(", ", "[", "]");
+        Node<T> p = rot;
+
+        while(p.venstre!= null){
+
+            p =p.venstre;
+        }
+        s.add (p.verdi.toString ());
+        for (int i = 0; i < antall ()-1; i++) {
+            p = nesteInorden (p);
+           if (p != null)
+            s.add (p.verdi.toString ());
+
+        }
+        return s.toString ();
+/*
+           Node current, pre;
+
+
+        StringJoiner s = new StringJoiner(", ", "[", "]");
+            current = rot;
+            while (current != null) {
+                if (current.venstre == null) {
+                    System.out.print(current.verdi + " ");
+                    current = current.høyre;
+                }
+                else {
+
+                    pre = current.venstre;
+                    while (pre.høyre != null && pre.høyre != current)
+                        pre = pre.høyre;
+
+
+                    if (pr.høyre == null) {
+                        pr.høyre = curren;
+                        current = current.venstre;
+                    }
+
+
+                    else {
+                        pre.høyre = null;
+                        s.add (current.verdi.toString ());
+                        current = current.høyre;
+                    }
+
+                }
+
+            }
+        return  s.toString ();*/
+        }
 
 
     public String omvendtString()
@@ -451,35 +500,44 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
         Node p = rot;
         if (rot == null){
-            return s.toString ();
+            return "[]";
 
         }
         TabellStakk<Node> stakk = new TabellStakk<> () ;
         stakk.leggInn (p);
-
+   Node forrige =null;
       while (!stakk.tom ()){
 
           Node q = stakk.kikk ();
 
-          if (q.høyre == null && q.venstre == null){
-              Node r = stakk.taUt ();
+          if (forrige == null || forrige.venstre == q || forrige.høyre==q){
 
-              if (r.verdi != null) {
+             if (q.venstre!=null)
+                 stakk.leggInn (q.venstre);
 
-                  s.add (r.verdi.toString ());
+            else if (q.høyre!= null)
+                         stakk.leggInn (q.høyre);
+                 //
 
+              else {
+                  stakk.taUt ();
+                 s.add (q.verdi.toString ());
               }
           }
-          else{
-              if(q.høyre != null){
+          else if(q.venstre == forrige) {
+              if (q.høyre != null) {
                   stakk.leggInn (q.høyre);
-                  q.høyre = null;
-              }
-              if (q.venstre !=null){
-                  stakk.leggInn (q.venstre);
-                  q.venstre=null;
+
+              } else {
+                  stakk.taUt ();
+                  s.add (q.verdi.toString ());
               }
           }
+             else if (q.høyre ==forrige){
+                  stakk.taUt ();
+                  s.add (q.verdi.toString ());
+              }
+            forrige=q;
       }
 
         return s.toString ();

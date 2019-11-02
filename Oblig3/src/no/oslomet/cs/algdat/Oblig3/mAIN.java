@@ -59,11 +59,16 @@ public class mAIN {
 // OBS: Hvis du ikke har gjort oppgave 4 kan du her bruke toString()
 
         //oppgave 6
-        ObligSBinTre<Character> tre = new ObligSBinTre<>(Comparator. naturalOrder ());
+       /* ObligSBinTre<Character> tre = new ObligSBinTre<>(Comparator. naturalOrder ());
         char [] verdier = "IATBHJCRSOFELKGDMPQN" .toCharArray();
         for ( char c : verdier) tre.leggInn(c);
-        System. out .println(tre.høyreGren() + " " + tre.lengstGren());
+        System. out .println(tre.høyreGren() + " " + tre.lengstGren());*/
 
+        // oppgave 3
+        int[] i = {4,7,2,9,4,10,8,7,6,4,1};
+        ObligSBinTre<Integer> tree = new ObligSBinTre<>(Comparator.naturalOrder());
+        for (int verdi : i) tree.leggInn(verdi);
+        System.out.println(tree);
 
     }
 }
