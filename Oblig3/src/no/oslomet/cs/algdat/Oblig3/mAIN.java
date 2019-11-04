@@ -39,14 +39,14 @@ public class mAIN {
         System.out.println ("-------------");
 */
       //  Oppgave3
-        /*
+
         int[] i = {4,7,2,9,4,10,8,7,6,4,1};
-        ObligSBinTre<Integer> tree = new ObligSBinTre<>(Comparator.naturalOrder());
-        for (int verdi : i) tree.leggInn(verdi);
-        System.out.println(tree);
+        ObligSBinTre<Integer> trees = new ObligSBinTre<>(Comparator.naturalOrder());
+        for (int verdi : i) trees.leggInn(verdi);
+        System.out.println(trees);
 
 
-/*
+
         int [] a = {4,7,2,9,4,10,8,7,4,6,1};
         ObligSBinTre<Integer> tre = new ObligSBinTre<>(Comparator. naturalOrder ());
         for ( int verdi : a) tre.leggInn(verdi);
@@ -54,16 +54,21 @@ public class mAIN {
         tre.fjernAlle(7); tre.fjern(8);
         System. out .println(tre.antall()); // 5
         System. out .println(tre + " " + tre.toString());
-*/
+
 // [1, 2, 6, 9, 10] [10, 9, 6, 2, 1]
 // OBS: Hvis du ikke har gjort oppgave 4 kan du her bruke toString()
 
         //oppgave 6
-        ObligSBinTre<Character> tre = new ObligSBinTre<>(Comparator. naturalOrder ());
+       /* ObligSBinTre<Character> tre = new ObligSBinTre<>(Comparator. naturalOrder ());
         char [] verdier = "IATBHJCRSOFELKGDMPQN" .toCharArray();
         for ( char c : verdier) tre.leggInn(c);
-        System. out .println(tre.høyreGren() + " " + tre.lengstGren());
+        System. out .println(tre.høyreGren() + " " + tre.lengstGren());*/
 
+        // oppgave 3
+        int[] d = {4,7,2,9,4,10,8,7,6,4,1};
+        ObligSBinTre<Integer> tree = new ObligSBinTre<>(Comparator.naturalOrder());
+        for (int verdi : d) tree.leggInn(verdi);
+        System.out.println(tree);
 
     }
 }
