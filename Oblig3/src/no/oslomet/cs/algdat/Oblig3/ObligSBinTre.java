@@ -494,20 +494,67 @@ public class ObligSBinTre<T> implements Beholder<T> {
         private Node<T> p = rot, q = null;
         private boolean removeOK = false;
         private int iteratorendringer = endringer;
+        TabellStakk<Node> s = new TabellStakk<> () ;
 
-        private BladnodeIterator()  // konstruktør
+        private BladnodeIterator()
         {
-            throw new UnsupportedOperationException ("Ikke kodet ennå!");
+            if(tom()){
+                return;
+            }
+
+            s.leggInn (p);
+            while (!s.tom ()){
+                q = s.taUt ();
+
+                if (q.høyre != null){
+                    s.leggInn (q.høyre);
+                }
+                if(q.venstre != null){
+                    s.leggInn (q.venstre);
+                }
+                if (q.venstre == null && q.høyre == null){
+                    p = q;
+                    break;
+                }
+            }
         }
 
         @Override
         public boolean hasNext() {
-            return p != null;  // Denne skal ikke endres!
+            return p != null;
         }
 
         @Override
         public T next() {
-            throw new UnsupportedOperationException ("Ikke kodet ennå!");
+
+            if (!hasNext()) throw new NoSuchElementException("Ingen verdier!");
+
+            if (iteratorendringer != endringer)
+                throw new ConcurrentModificationException("Det blir endret");
+
+            T verdi = p.verdi;
+
+            while (true && p != null){
+                if (p.venstre == null && p.høyre == null) return verdi;
+
+                if (p.venstre != null)
+                {
+                    if (p.høyre != null) s.leggInn(p.høyre);
+                    p = p.venstre;
+                }
+                else if (p.høyre != null)
+                {
+                    p = p.høyre;
+                }
+                else if (!s.tom())
+                {
+                    p = s.taUt();
+                }
+                else
+                    break;
+            }
+            removeOK = true;
+            return verdi;
         }
 
         @Override
