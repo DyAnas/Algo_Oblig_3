@@ -455,30 +455,57 @@ public class ObligSBinTre<T> implements Beholder<T> {
             return s.toString ();
         }
     @Override
-    public Iterator<T> iterator() {
-        return new BladnodeIterator ();
+    public Iterator<T> iterator()
+    {
+        return new BladnodeIterator();
     }
 
-    private class BladnodeIterator implements Iterator<T> {
+    private class BladnodeIterator implements Iterator<T>
+    {
         private Node<T> p = rot, q = null;
         private boolean removeOK = false;
         private int iteratorendringer = endringer;
 
-        private BladnodeIterator()  // konstruktør
-        {
-            throw new UnsupportedOperationException ("Ikke kodet ennå!");
+        private BladnodeIterator() {
+            if(tom()){
+                return;
+            }
+            while(p.venstre != null || p.høyre != null){
+                if(p.venstre != null) {
+                    p = p.venstre;
+                }
+                else if(p.høyre != null){
+                    p = p.høyre;
+                }
+            }
         }
 
         @Override
-        public boolean hasNext() {
-            return p != null;  // Denne skal ikke endres!
+        public boolean hasNext()
+        {
+            return p != null;
         }
 
         @Override
         public T next() {
-            throw new UnsupportedOperationException ("Ikke kodet ennå!");
-        }
+            if (!hasNext()) {
+                throw new NoSuchElementException("Ikke flere noder!");
+            }
+            if (iteratorendringer != endringer) {
+                throw new ConcurrentModificationException("Listen blir endret");
+            }
+            T verdi = p.verdi;
+            q = p;
+            p = nesteInorden(p);
 
+            while (p != null && (p.venstre != null || p.høyre != null)) {
+                p = nesteInorden(p);
+            }
+            removeOK = true;
+            endringer++;
+            iteratorendringer++;
+            return verdi;
+        }
         @Override
         public void remove() {
             throw new UnsupportedOperationException ("Ikke kodet ennå!");
