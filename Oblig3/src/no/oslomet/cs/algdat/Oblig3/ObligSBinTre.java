@@ -91,42 +91,50 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     @Override
     public boolean fjern(T verdi) {
-        if (verdi == null) return false;  // treet har ingen nullverdier
+        if (verdi == null) return false;
 
-        Node<T> p = rot, q = null;   // q skal være forelder til p
+        Node<T> p = rot, q = null;
 
-        while (p != null)            // leter etter verdi
+        while (p != null)
         {
-            int cmp = comp.compare(verdi,p.verdi);      // sammenligner
-            if (cmp < 0) { q = p; p = p.venstre; }      // går til venstre
-            else if (cmp > 0) { q = p; p = p.høyre; }   // går til høyre
-            else break;    // den søkte verdien ligger i p
+            int cmp = comp.compare(verdi,p.verdi);
+            if (cmp < 0) { q = p; p = p.venstre; }
+            else if (cmp > 0) { q = p; p = p.høyre; }
+            else break;
         }
-        if (p == null) return false;   // finner ikke verdi
+        if (p == null) return false;
 
-        if (p.venstre == null || p.høyre == null)  // Tilfelle 1) og 2)
+        if (p.venstre == null || p.høyre == null)
         {
-            Node<T> b = p.venstre != null ? p.venstre : p.høyre;  // b for barn
+            Node<T> b = p.venstre != null ? p.venstre : p.høyre;
+
+            if (b != null) b.forelder = q;
+
             if (p == rot) rot = b;
             else if (p == q.venstre) q.venstre = b;
             else q.høyre = b;
         }
-        else  // Tilfelle 3)
+        else
         {
-            Node<T> s = p, r = p.høyre;   // finner neste i inorden
+            Node<T> s = p, r = p.høyre;
             while (r.venstre != null)
             {
-                s = r;    // s er forelder til r
+                s = r;
                 r = r.venstre;
             }
 
-            p.verdi = r.verdi;   // kopierer verdien i r til p
+            p.verdi = r.verdi;
+
+
+            if (r.høyre != null) r.høyre.forelder = s;
 
             if (s != p) s.venstre = r.høyre;
             else s.høyre = r.høyre;
         }
 
-        antall--;   // det er nå én node mindre i treet
+        antall--;
+        endringer++;
+
         return true;
 
 
@@ -135,75 +143,9 @@ public class ObligSBinTre<T> implements Beholder<T> {
     }
 
     public int fjernAlle(T verdi) {
-        if (verdi == null) throw new
-                IllegalArgumentException("verdi er null!");
-
-        Node<T> p = rot;
-        Node<T> q = null;
-        Node<T> r = null;
-        Node<T> s = null;
-
-        Stakk<Node<T>> stakk = new TabellStakk<>();
-
-        while (p != null)
-        {
-            int cmp = comp.compare(verdi,p.verdi);
-
-            if (cmp < 0)
-            {
-                s = r;
-                r = q = p;
-                p = p.venstre;
-            }
-            else
-            {
-                if (cmp == 0)
-                {
-                    stakk.leggInn(q);
-                    stakk.leggInn(p);
-                }
-
-                q = p;
-                p = p.høyre;
-            }
-        }
-
-
-        int verdiAntall = stakk.antall()/2;
-
-        if (verdiAntall == 0) return 0;
-
-        while (stakk.antall() > 2)
-        {
-            p = stakk.taUt();
-            q = stakk.taUt();
-
-            if (p == q.venstre) q.venstre = p.høyre;
-            else q.høyre = p.høyre;
-        }
-
-
-
-        p = stakk.taUt();
-        q = stakk.taUt();
-
-        if (p.venstre == null || p.høyre == null)
-        {
-            Node<T> x = p.høyre == null ? p.venstre : p.høyre;
-            if (p == rot) rot = x;
-            else if (p == q.venstre) q.venstre = x;
-            else q.høyre = x;
-        }
-        else
-        {
-            p.verdi = r.verdi;
-            if (r == p.høyre) p.høyre = r.høyre;
-            else s.venstre = r.høyre;
-        }
-
-        antall -= verdiAntall;
-
-        return verdiAntall;
+        int antallFjernet = 0;
+        while (fjern(verdi)) antallFjernet++;
+        return antallFjernet;
     }
 
     @Override
@@ -234,8 +176,8 @@ public class ObligSBinTre<T> implements Beholder<T> {
 
     @Override
     public void nullstill() {
-        if (!tom()) nullstill(rot);  // nullstiller
-        rot = null; antall = 0;      // treet er nå tomt
+        if (!tom()) nullstill(rot);
+        rot = null; antall = 0;
         endringer++;   // treet er endret
     }
 
@@ -263,7 +205,7 @@ public class ObligSBinTre<T> implements Beholder<T> {
             }
             return p;
         }else{
-            while(p.forelder != null && p.forelder.høyre != p){
+            while(p.forelder != null && p.forelder.venstre != p){
                     p = p.forelder;
 
                 }
@@ -353,13 +295,6 @@ public class ObligSBinTre<T> implements Beholder<T> {
                 p=p.venstre;
 
             }
-
-
-
-
-
-
-
         }
         return  s.toString();
 
@@ -396,126 +331,92 @@ public class ObligSBinTre<T> implements Beholder<T> {
         return s.toString();
     }
 
-    // en hjelpemetode for å finne grener
-
-    private void finnGrenVedRek(Node<T> p, Liste<String> l, StringBuilder sB) {
-        T verdi = p.verdi;
-        int k = verdi.toString().length();
-
-        if(p.høyre == null && p.venstre == null) {
-            l.leggInn(sB.append(verdi).append(']').toString());
-
-
-            sB.delete(sB.length() - k - 1, sB.length());
-        }
-
-        else {
-            sB.append(p.verdi).append(',').append(' ');
-            if(p.venstre != null)
-                finnGrenVedRek(p.venstre, l, sB);
-            if(p.høyre != null)
-                finnGrenVedRek(p.høyre, l, sB);
-            sB.delete(sB.length() - k - 2, sB.length());    
-        }
-    }
-
-
-
     public String[] grener() {
-        Liste<String> list = new TabellListe<>();
-        StringBuilder strbuilder = new StringBuilder("[");
-
-        if(!tom())
-            finnGrenVedRek(rot, list , strbuilder );
-
-        String[] grenerArray = new String[list.antall()];
-
-        int i = 0;
-        for (String gren : list)
-            grenerArray [i++] = gren;
-
-        return grenerArray ;
+        throw new UnsupportedOperationException ("Ikke kodet ennå!");
     }
 
 
 
+        public String bladnodeverdier() {
 
+            StringJoiner s = new StringJoiner (", ", "[", "]");
 
+            Node p = rot;
+            if (rot == null) {
+                return s.toString ();
 
-
-    public String bladnodeverdier() {
-
-        StringJoiner s = new StringJoiner(", ", "[",  "]");
-
-        Node p = rot;
-        if (rot == null){
-       return s.toString ();
-
-        }
-
-        TabellStakk<Node> stakk = new TabellStakk<> () ;
-        stakk.leggInn (p);
-        while (!stakk.tom ()){
-            Node q = stakk.taUt ();
-
-            if (q.høyre != null){
-                stakk.leggInn (q.høyre);
             }
-            if(q.venstre != null){
-                stakk.leggInn (q.venstre);
-            } if (q.venstre == null && q.høyre == null){
+
+            TabellStakk<Node> stakk = new TabellStakk<> ();
+            stakk.leggInn (p);
+            while (!stakk.tom ()) {
+                Node q = stakk.taUt ();
+
+                if (q.høyre != null) {
+                    stakk.leggInn (q.høyre);
+                }
+                if (q.venstre != null) {
+                    stakk.leggInn (q.venstre);
+                }
+                if (q.venstre == null && q.høyre == null) {
                     s.add (q.verdi.toString ());
 
 
                 }
             }    //s.append (']');
-        //String result = s.deleteCharAt(s.length() - 2).toString()+"]" + s.toString ().length ();
-        // result += "]";
-        return s.toString ();
-    }
-
-    public String postString() {
-
-
-        StringJoiner s = new StringJoiner(", ", "[",  "]");
-
-
-        Node p = rot;
-        if (rot == null){
+            //String result = s.deleteCharAt(s.length() - 2).toString()+"]" + s.toString ().length ();
+            // result += "]";
             return s.toString ();
-
         }
-        TabellStakk<Node> stakk = new TabellStakk<> () ;
-        stakk.leggInn (p);
 
-      while (!stakk.tom ()){
+        public String postString() {
 
-          Node q = stakk.kikk ();
 
-          if (q.høyre == null && q.venstre == null){
-              Node r = stakk.taUt ();
+            StringJoiner s = new StringJoiner (", ", "[", "]");
 
-              if (r.verdi != null) {
 
-                  s.add (r.verdi.toString ());
+            Node p = rot;
+            if (rot == null) {
+                return "[]";
 
-              }
-          }
-          else{
-              if(q.høyre != null){
-                  stakk.leggInn (q.høyre);
-                  q.høyre = null;
-              }
-              if (q.venstre !=null){
-                  stakk.leggInn (q.venstre);
-                  q.venstre=null;
-              }
-          }
-      }
+            }
+            TabellStakk<Node> stakk = new TabellStakk<> ();
+            stakk.leggInn (p);
+            Node forrige = null;
+            while (!stakk.tom ()) {
 
-        return s.toString ();
-    }
+                Node q = stakk.kikk ();
 
+                if (forrige == null || forrige.venstre == q || forrige.høyre == q) {
+
+                    if (q.venstre != null)
+                        stakk.leggInn (q.venstre);
+
+                    else if (q.høyre != null)
+                        stakk.leggInn (q.høyre);
+                        //
+
+                    else {
+                        stakk.taUt ();
+                        s.add (q.verdi.toString ());
+                    }
+                } else if (q.venstre == forrige) {
+                    if (q.høyre != null) {
+                        stakk.leggInn (q.høyre);
+
+                    } else {
+                        stakk.taUt ();
+                        s.add (q.verdi.toString ());
+                    }
+                } else if (q.høyre == forrige) {
+                    stakk.taUt ();
+                    s.add (q.verdi.toString ());
+                }
+                forrige = q;
+            }
+
+            return s.toString ();
+        }
     @Override
     public Iterator<T> iterator() {
         return new BladnodeIterator ();
