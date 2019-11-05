@@ -396,9 +396,52 @@ public class ObligSBinTre<T> implements Beholder<T> {
         return s.toString();
     }
 
-    public String[] grener() {
-        throw new UnsupportedOperationException ("Ikke kodet ennå!");
+    // en hjelpemetode for å finne grener
+
+    private void finnGrenVedRek(Node<T> p, Liste<String> l, StringBuilder sB) {
+        T verdi = p.verdi;
+        int k = verdi.toString().length();
+
+        if(p.høyre == null && p.venstre == null) {
+            l.leggInn(sB.append(verdi).append(']').toString());
+
+
+            sB.delete(sB.length() - k - 1, sB.length());
+        }
+
+        else {
+            sB.append(p.verdi).append(',').append(' ');
+            if(p.venstre != null)
+                finnGrenVedRek(p.venstre, l, sB);
+            if(p.høyre != null)
+                finnGrenVedRek(p.høyre, l, sB);
+            sB.delete(sB.length() - k - 2, sB.length());    
+        }
     }
+
+
+
+    public String[] grener() {
+        Liste<String> list = new TabellListe<>();
+        StringBuilder strbuilder = new StringBuilder("[");
+
+        if(!tom())
+            finnGrenVedRek(rot, list , strbuilder );
+
+        String[] grenerArray = new String[list.antall()];
+
+        int i = 0;
+        for (String gren : list)
+            grenerArray [i++] = gren;
+
+        return grenerArray ;
+    }
+
+
+
+
+
+
 
     public String bladnodeverdier() {
 
